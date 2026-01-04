@@ -5,30 +5,19 @@ import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+
+  useEffect(() => setMounted(true), []);
 
   const { control } = useChatKit({
     api: {
       async getClientSecret(existing) {
-        if (existing) {
-          // Para refrescar la sesión existente, puedes implementar lógica aquí
-          // Por ahora, creamos una nueva sesión cada vez
-        }
-
         try {
           const res = await fetch('/api/chatkit/session', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
           });
 
-          if (!res.ok) {
-            throw new Error('Error al crear sesión');
-          }
+          if (!res.ok) throw new Error('Error al crear sesión');
 
           const { client_secret } = await res.json();
           return client_secret;
@@ -42,69 +31,38 @@ export default function Home() {
 
   if (!mounted) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontSize: '18px'
-      }}>
+      <div
+        style={{
+          display: 'grid',
+          placeItems: 'center',
+          width: '100vw',
+          height: '100vh',
+          margin: 0,
+        }}
+      >
         Cargando ChatKit...
       </div>
     );
   }
 
   return (
-    <main style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      padding: '20px',
-      width: '100%'
-    }}>
-      <div style={{
-        width: '100%',
-        maxWidth: '1200px',
-        height: '90vh',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#1a1a2e',
-        borderRadius: '12px',
+    <main
+      style={{
+        width: '100vw',
+        height: '100vh',
+        margin: 0,
+        padding: 0,
         overflow: 'hidden',
-        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
-      }}>
-        <div style={{
-          padding: '20px',
-          borderBottom: '1px solid #2a2a3e',
-          backgroundColor: '#0f0f23'
-        }}>
-          <h1 style={{
-            fontSize: '24px',
-            fontWeight: '600',
-            margin: 0,
-            color: '#ffffff'
-          }}>
-            ChatGPT Clone con ChatKit
-          </h1>
-        </div>
-        <div style={{
-          flex: 1,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: '20px'
-        }}>
-          <ChatKit 
-            control={control} 
-            style={{
-              width: '100%',
-              height: '100%',
-              borderRadius: '8px'
-            }}
-          />
-        </div>
-      </div>
+      }}
+    >
+      <ChatKit
+        control={control}
+        style={{
+          width: '100%',
+          height: '100%',
+          borderRadius: 0,
+        }}
+      />
     </main>
   );
 }
