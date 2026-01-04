@@ -10,11 +10,8 @@ export default function Home() {
     setMounted(true);
   }, []);
 
-  const domainPk = process.env.NEXT_PUBLIC_DOMAIN_PK;
-  
   const { control } = useChatKit({
     api: {
-      ...(domainPk && domainPk.trim() !== '' ? { domainKey: domainPk } : {}),
       async getClientSecret(existing) {
         if (existing) {
           // Para refrescar la sesión existente, puedes implementar lógica aquí
@@ -59,19 +56,55 @@ export default function Home() {
 
   return (
     <main style={{
-      width: '100%',
-      height: '100vh',
-      margin: 0,
-      padding: 0
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
+      padding: '20px',
+      width: '100%'
     }}>
-      <ChatKit 
-        control={control} 
-        style={{
-          width: '100%',
-          height: '100%'
-        }}
-      />
+      <div style={{
+        width: '100%',
+        maxWidth: '1200px',
+        height: '90vh',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '#1a1a2e',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
+      }}>
+        <div style={{
+          padding: '20px',
+          borderBottom: '1px solid #2a2a3e',
+          backgroundColor: '#0f0f23'
+        }}>
+          <h1 style={{
+            fontSize: '24px',
+            fontWeight: '600',
+            margin: 0,
+            color: '#ffffff'
+          }}>
+            ChatGPT Clone con ChatKit
+          </h1>
+        </div>
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '20px'
+        }}>
+          <ChatKit 
+            control={control} 
+            style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: '8px'
+            }}
+          />
+        </div>
+      </div>
     </main>
   );
 }
-
