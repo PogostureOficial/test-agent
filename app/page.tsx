@@ -1,6 +1,7 @@
 'use client';
 
 import { ChatKit, useChatKit } from '@openai/chatkit-react';
+import type { ChatKitOptions } from '@openai/chatkit';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
@@ -8,9 +9,9 @@ export default function Home() {
 
   useEffect(() => setMounted(true), []);
 
-  const { control } = useChatKit({
+  const options: ChatKitOptions = {
     api: {
-      async getClientSecret(existing) {
+      async getClientSecret(existing: any) {
         try {
           const res = await fetch('/api/chatkit/session', {
             method: 'POST',
@@ -27,7 +28,50 @@ export default function Home() {
         }
       },
     },
-  });
+    theme: {
+      colorScheme: 'dark',
+      radius: 'pill',
+      density: 'normal',
+      typography: {
+        baseSize: 16,
+        fontFamily: '"OpenAI Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif',
+        fontFamilyMono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace',
+        fontSources: [
+          {
+            family: 'OpenAI Sans',
+            src: 'https://cdn.openai.com/common/fonts/openai-sans/v2/OpenAISans-Regular.woff2',
+            weight: 400,
+            style: 'normal',
+            display: 'swap'
+          }
+          // ...and 7 more font sources
+        ]
+      }
+    },
+    composer: {
+      attachments: {
+        enabled: true,
+        maxCount: 5,
+        maxSize: 10485760
+      },
+      tools: [
+        {
+          id: 'search_docs',
+          label: 'Search docs',
+          shortLabel: 'Docs',
+          placeholderOverride: 'Search documentation',
+          icon: 'book-open',
+          pinned: false
+        }
+      ],
+    },
+    startScreen: {
+      greeting: '',
+      prompts: [],
+    },
+  };
+
+  const { control } = useChatKit(options);
 
   if (!mounted) {
     return (
