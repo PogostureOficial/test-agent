@@ -10,7 +10,7 @@ export default function Home() {
 
   useEffect(() => setMounted(true), []);
 
-  const options: ChatKitOptions = useMemo(() => ({
+  const baseOptions: Omit<ChatKitOptions, 'theme'> = useMemo(() => ({
     api: {
       async getClientSecret(existing: any) {
         try {
@@ -28,26 +28,6 @@ export default function Home() {
           throw error;
         }
       },
-    },
-    theme: {
-      colorScheme,
-      radius: 'pill',
-      density: 'normal',
-      typography: {
-        baseSize: 16,
-        fontFamily: '"OpenAI Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif',
-        fontFamilyMono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace',
-        fontSources: [
-          {
-            family: 'OpenAI Sans',
-            src: 'https://cdn.openai.com/common/fonts/openai-sans/v2/OpenAISans-Regular.woff2',
-            weight: 400,
-            style: 'normal',
-            display: 'swap'
-          }
-          // ...and 7 more font sources
-        ]
-      }
     },
     composer: {
       attachments: {
@@ -70,7 +50,31 @@ export default function Home() {
       greeting: '',
       prompts: [],
     },
-  }), [colorScheme]);
+  }), []);
+
+  const options: ChatKitOptions = useMemo(() => ({
+    ...baseOptions,
+    theme: {
+      colorScheme,
+      radius: 'pill',
+      density: 'normal',
+      typography: {
+        baseSize: 16,
+        fontFamily: '"OpenAI Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif',
+        fontFamilyMono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace',
+        fontSources: [
+          {
+            family: 'OpenAI Sans',
+            src: 'https://cdn.openai.com/common/fonts/openai-sans/v2/OpenAISans-Regular.woff2',
+            weight: 400,
+            style: 'normal',
+            display: 'swap'
+          }
+          // ...and 7 more font sources
+        ]
+      }
+    },
+  }), [baseOptions, colorScheme]);
 
   const { control } = useChatKit(options);
 
@@ -138,7 +142,6 @@ export default function Home() {
         />
       </button>
       <ChatKit
-        key={colorScheme}
         control={control}
         style={{
           width: '100%',
