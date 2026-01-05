@@ -2,14 +2,15 @@
 
 import { ChatKit, useChatKit } from '@openai/chatkit-react';
 import type { ChatKitOptions } from '@openai/chatkit';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('dark');
 
   useEffect(() => setMounted(true), []);
 
-  const options: ChatKitOptions = {
+  const options: ChatKitOptions = useMemo(() => ({
     api: {
       async getClientSecret(existing: any) {
         try {
@@ -29,7 +30,7 @@ export default function Home() {
       },
     },
     theme: {
-      colorScheme: 'dark',
+      colorScheme,
       radius: 'pill',
       density: 'normal',
       typography: {
@@ -69,9 +70,13 @@ export default function Home() {
       greeting: '',
       prompts: [],
     },
-  };
+  }), [colorScheme]);
 
   const { control } = useChatKit(options);
+
+  const toggleTheme = () => {
+    setColorScheme((prev: 'light' | 'dark') => prev === 'dark' ? 'light' : 'dark');
+  };
 
   if (!mounted) {
     return (
@@ -97,9 +102,43 @@ export default function Home() {
         margin: 0,
         padding: 0,
         overflow: 'hidden',
+        position: 'relative',
       }}
     >
+      <button
+        onClick={toggleTheme}
+        style={{
+          position: 'absolute',
+          top: '16px',
+          right: '16px',
+          zIndex: 1000,
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '8px',
+          transition: 'background-color 0.2s',
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor = colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent';
+        }}
+        aria-label={colorScheme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+      >
+        <img
+          src={colorScheme === 'dark' ? '/light.svg' : '/dark.svg'}
+          alt={colorScheme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+          width={22}
+          height={22}
+        />
+      </button>
       <ChatKit
+        key={colorScheme}
         control={control}
         style={{
           width: '100%',
